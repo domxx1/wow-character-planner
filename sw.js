@@ -1,6 +1,6 @@
-const CACHE="wow-charplan-v6";
+const CACHE="wow-charplan-v7";
 const ASSETS=[
-  "./","./index.html","./app.css","./app.js","./patch-v2.js","./patch-v2-1.js","./patch-v3.js","./manifest.webmanifest",
+  "./","./index.html","./app.css","./app.js","./patch-v2.js","./patch-v2-1.js","./patch-v3.js","./patch-v3-1.js","./manifest.webmanifest",
   "./icons/icon-192.png","./icons/icon-512.png","./icons/apple-touch-icon.png"
 ];
 self.addEventListener("install",e=>{
@@ -19,13 +19,15 @@ self.addEventListener("fetch",e=>{
       const patchUrl=new URL("./patch-v2.js",self.location.href).href;
       const hotfixUrl=new URL("./patch-v2-1.js",self.location.href).href;
       const v3Url=new URL("./patch-v3.js",self.location.href).href;
-      let base=await c.match(baseUrl), patch=await c.match(patchUrl), hotfix=await c.match(hotfixUrl), v3=await c.match(v3Url);
+      const v31Url=new URL("./patch-v3-1.js",self.location.href).href;
+      let base=await c.match(baseUrl), patch=await c.match(patchUrl), hotfix=await c.match(hotfixUrl), v3=await c.match(v3Url), v31=await c.match(v31Url);
       if(!base) base=await fetch(baseUrl);
       if(!patch) patch=await fetch(patchUrl);
       if(!hotfix) hotfix=await fetch(hotfixUrl);
       if(!v3) v3=await fetch(v3Url);
-      if(base&&patch&&hotfix&&v3){
-        const body=(await base.text())+"\n\n"+(await patch.text())+"\n\n"+(await hotfix.text())+"\n\n"+(await v3.text());
+      if(!v31) v31=await fetch(v31Url);
+      if(base&&patch&&hotfix&&v3&&v31){
+        const body=(await base.text())+"\n\n"+(await patch.text())+"\n\n"+(await hotfix.text())+"\n\n"+(await v3.text())+"\n\n"+(await v31.text());
         return new Response(body,{headers:{"Content-Type":"application/javascript; charset=utf-8","Cache-Control":"no-cache"}});
       }
       return fetch(e.request);
