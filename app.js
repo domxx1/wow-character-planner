@@ -394,3 +394,23 @@ renderAll();
 if("serviceWorker" in navigator && location.protocol.startsWith("http")){
   navigator.serviceWorker.register("sw.js").catch(()=>{});
 }
+
+/* Load additive compatibility/features when app.js is served directly (no bundling service worker). */
+(() => {
+  const PATCHES = [
+    "patch-v2.js","patch-v2-1.js","patch-v3.js","patch-v3-1.js",
+    "patch-v4.js","patch-v4-1.js","patch-v5.js"
+  ];
+  let chain = Promise.resolve();
+  PATCHES.forEach(src => {
+    chain = chain.then(() => new Promise((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = `${src}?build=0.5.1`;
+      s.async = false;
+      s.onload = resolve;
+      s.onerror = reject;
+      document.body.appendChild(s);
+    }));
+  });
+  chain.catch(() => console.error("Charakterplaner: Patch-Dateien konnten nicht vollständig geladen werden."));
+})();
