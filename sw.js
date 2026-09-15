@@ -1,6 +1,6 @@
-const CACHE="wow-charplan-v9";
+const CACHE="wow-charplan-v10";
 const ASSETS=[
-  "./","./index.html","./app.css","./app.js","./patch-v2.js","./patch-v2-1.js","./patch-v3.js","./patch-v3-1.js","./patch-v4.js","./patch-v4-1.js","./manifest.webmanifest",
+  "./","./index.html","./app.css","./app.js","./patch-v2.js","./patch-v2-1.js","./patch-v3.js","./patch-v3-1.js","./patch-v4.js","./patch-v4-1.js","./patch-v5.js","./manifest.webmanifest",
   "./icons/icon-192.png","./icons/icon-512.png","./icons/apple-touch-icon.png"
 ];
 self.addEventListener("install",e=>{
@@ -15,7 +15,7 @@ self.addEventListener("fetch",e=>{
   const url=new URL(e.request.url);
   if(url.pathname.endsWith("/app.js")){
     e.respondWith(caches.open(CACHE).then(async c=>{
-      const urls=["./app.js","./patch-v2.js","./patch-v2-1.js","./patch-v3.js","./patch-v3-1.js","./patch-v4.js","./patch-v4-1.js"].map(p=>new URL(p,self.location.href).href);
+      const urls=["./app.js","./patch-v2.js","./patch-v2-1.js","./patch-v3.js","./patch-v3-1.js","./patch-v4.js","./patch-v4-1.js","./patch-v5.js"].map(p=>new URL(p,self.location.href).href);
       const responses=[];
       for(const u of urls){let r=await c.match(u);if(!r)r=await fetch(u);responses.push(r);}
       if(responses.every(Boolean)){
