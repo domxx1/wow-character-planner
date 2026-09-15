@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <meta name="description" content="Mobile WoW-Charakterplanung mit Matrix, Berufen und Export/Import.">
+  <title>WoW Charakterplaner</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">W</div>
+        <div>
+          <div class="brand-title">Charakterplaner</div>
+          <div class="brand-sub">WoW Retail · 12.1</div>
+        </div>
+      </div>
+
+      <nav class="nav-list" aria-label="Hauptnavigation">
+        <button class="nav-btn active" data-view="dashboard"><span>◈</span> Übersicht</button>
+        <button class="nav-btn" data-view="characters"><span>♟</span> Charaktere</button>
+        <button class="nav-btn" data-view="matrix"><span>▦</span> Rasse × Klasse</button>
+        <button class="nav-btn" data-view="professions"><span>⚒</span> Berufe</button>
+        <button class="nav-btn" data-view="settings"><span>⚙</span> Einstellungen</button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div id="saveState" class="save-state">Lokal gespeichert</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div>
+          <div class="eyebrow">WORLD OF WARCRAFT</div>
+          <h1 id="viewTitle">Übersicht</h1>
+        </div>
+        <div class="topbar-actions">
+          <button id="quickAdd" class="btn btn-primary">+ Charakter</button>
+        </div>
+      </header>
+
+      <section id="dashboard" class="view active">
+        <div class="hero">
+          <div>
+            <div class="eyebrow">CHARAKTERPLANUNG</div>
+            <h2>Deine Warband auf einen Blick</h2>
+            <p>Charaktere, Klassenabdeckung, Rüstungsarten und Berufe – automatisch aus einer einzigen Charakterliste berechnet.</p>
+          </div>
+          <button class="btn btn-primary hero-add" data-action="add-character">+ Neuen Charakter planen</button>
+        </div>
+
+        <div class="stat-grid">
+          <article class="stat-card"><div class="stat-label">Charaktere</div><div class="stat-value" id="statCharacters">0</div><div class="stat-note">gesamt</div></article>
+          <article class="stat-card"><div class="stat-label">Horde</div><div class="stat-value" id="statHorde">0</div><div class="stat-note">Charaktere</div></article>
+          <article class="stat-card"><div class="stat-label">Allianz</div><div class="stat-value" id="statAlliance">0</div><div class="stat-note">Charaktere</div></article>
+          <article class="stat-card"><div class="stat-label">Geplant</div><div class="stat-value" id="statPlanned">0</div><div class="stat-note">noch nicht aktiv</div></article>
+        </div>
+
+        <div class="grid-2">
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <div class="eyebrow">KLASSEN</div>
+                <h3>Abdeckung</h3>
+              </div>
+            </div>
+            <div id="classCoverage" class="coverage-list"></div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <div class="eyebrow">RÜSTUNG</div>
+                <h3>Verteilung</h3>
+              </div>
+            </div>
+            <div id="armorCoverage" class="armor-grid"></div>
+          </article>
+        </div>
+
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <div class="eyebrow">ZULETZT</div>
+              <h3>Charaktere</h3>
+            </div>
+            <button class="btn btn-ghost" data-jump="characters">Alle anzeigen</button>
+          </div>
+          <div id="recentCharacters" class="character-list compact"></div>
+        </article>
+      </section>
+
+      <section id="characters" class="view">
+        <div class="toolbar">
+          <label class="search-wrap">
+            <span>⌕</span>
+            <input id="searchInput" type="search" placeholder="Name, Volk, Klasse, Beruf …">
+          </label>
+          <select id="filterFaction" class="control">
+            <option value="">Alle Fraktionen</option>
+            <option>Horde</option>
+            <option>Allianz</option>
+            <option>Neutral</option>
+          </select>
+          <select id="filterClass" class="control"><option value="">Alle Klassen</option></select>
+          <select id="filterStatus" class="control">
+            <option value="">Alle Status</option>
+            <option value="Aktiv">Aktiv</option>
+            <option value="Geplant">Geplant</option>
+            <option value="Reserve">Reserve</option>
+          </select>
+        </div>
+        <div id="characterCount" class="result-count"></div>
+        <div id="characterList" class="character-list"></div>
+      </section>
+
+      <section id="matrix" class="view">
+        <div class="matrix-intro">
+          <div>
+            <h2>Rassen-Klassen-Matrix</h2>
+            <p>Die Matrix wird automatisch aus deinen Charakteren erzeugt. Klick auf ein Feld, um die passende Kombination zu planen oder vorhandene Charaktere zu sehen.</p>
+          </div>
+          <div class="legend">
+            <span><i class="dot has"></i> vorhanden</span>
+            <span><i class="dot planned"></i> geplant</span>
+            <span><i class="dot empty"></i> frei</span>
+          </div>
+        </div>
+        <div class="matrix-wrap">
+          <table id="raceClassMatrix" class="matrix-table"></table>
+        </div>
+      </section>
+
+      <section id="professions" class="view">
+        <div class="grid-2">
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <div class="eyebrow">BERUFE</div>
+                <h3>Abdeckung</h3>
+              </div>
+            </div>
+            <div id="professionCoverage" class="profession-grid"></div>
+          </article>
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <div class="eyebrow">VERTEILUNG</div>
+                <h3>Wer kann was?</h3>
+              </div>
+            </div>
+            <div id="professionCharacters" class="profession-characters"></div>
+          </article>
+        </div>
+      </section>
+
+      <section id="settings" class="view">
+        <div class="settings-grid">
+          <article class="panel">
+            <div class="panel-head"><div><div class="eyebrow">DATEN</div><h3>Import & Export</h3></div></div>
+            <p class="muted">CSV-Import unterstützt die Spalten deiner bestehenden Tabelle: Name;Volk;Fraktion;Klasse;Geschlecht;Beruf 1;Beruf 2;Midnight.</p>
+            <div class="button-row">
+              <label class="btn btn-secondary file-btn">CSV importieren<input id="csvImport" type="file" accept=".csv,text/csv"></label>
+              <button id="exportCsv" class="btn btn-secondary">CSV exportieren</button>
+              <button id="exportJson" class="btn btn-secondary">Backup (JSON)</button>
+            </div>
+          </article>
+
+          <article class="panel">
+            <div class="panel-head"><div><div class="eyebrow">TEST</div><h3>Demo-Daten</h3></div></div>
+            <p class="muted">Lädt einige Beispielcharaktere. Deine vorhandenen Daten bleiben bestehen.</p>
+            <button id="loadDemo" class="btn btn-secondary">Demo-Daten hinzufügen</button>
+          </article>
+
+          <article class="panel danger-panel">
+            <div class="panel-head"><div><div class="eyebrow">ZURÜCKSETZEN</div><h3>Lokale Daten löschen</h3></div></div>
+            <p class="muted">Löscht nur die im Browser gespeicherten App-Daten auf diesem Gerät.</p>
+            <button id="clearData" class="btn btn-danger">Alle Charaktere löschen</button>
+          </article>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <nav class="bottom-nav" aria-label="Mobile Navigation">
+    <button class="bottom-btn active" data-view="dashboard"><span>◈</span><small>Übersicht</small></button>
+    <button class="bottom-btn" data-view="characters"><span>♟</span><small>Charaktere</small></button>
+    <button class="bottom-btn" data-view="matrix"><span>▦</span><small>Matrix</small></button>
+    <button class="bottom-btn" data-view="professions"><span>⚒</span><small>Berufe</small></button>
+    <button class="bottom-btn" data-view="settings"><span>⚙</span><small>Mehr</small></button>
+  </nav>
+
+  <dialog id="characterDialog" class="modal">
+    <form id="characterForm" method="dialog">
+      <div class="modal-head">
+        <div>
+          <div class="eyebrow">CHARAKTER</div>
+          <h2 id="modalTitle">Charakter planen</h2>
+        </div>
+        <button class="icon-btn" value="cancel" aria-label="Schließen">×</button>
+      </div>
+
+      <input id="charId" type="hidden">
+      <div class="form-grid">
+        <label class="field"><span>Name</span><input id="charName" required maxlength="40" placeholder="z. B. Lerossa"></label>
+        <label class="field"><span>Volk</span><select id="charRace" required></select></label>
+        <label class="field"><span>Fraktion</span><select id="charFaction" required><option>Horde</option><option>Allianz</option><option>Neutral</option></select></label>
+        <label class="field"><span>Klasse</span><select id="charClass" required></select></label>
+        <label class="field"><span>Geschlecht</span><select id="charGender"><option value=""></option><option>weiblich</option><option>männlich</option><option>divers</option></select></label>
+        <label class="field"><span>Status</span><select id="charStatus"><option>Aktiv</option><option>Geplant</option><option>Reserve</option></select></label>
+        <label class="field"><span>Beruf 1</span><select id="charProfession1"></select></label>
+        <label class="field"><span>Beruf 2</span><select id="charProfession2"></select></label>
+        <label class="field"><span>Server</span><input id="charRealm" placeholder="optional"></label>
+        <label class="field"><span>Midnight</span><select id="charMidnight"><option value=""></option><option>Ja</option><option>Nein</option><option>Geplant</option></select></label>
+        <label class="field field-full"><span>Notizen</span><textarea id="charNotes" rows="3" placeholder="Spezialisierung, Rolle, Ziel, Transmog-Idee …"></textarea></label>
+      </div>
+
+      <div class="modal-actions">
+        <button id="deleteCharacter" type="button" class="btn btn-danger ghost-danger hidden">Löschen</button>
+        <span class="spacer"></span>
+        <button value="cancel" class="btn btn-ghost">Abbrechen</button>
+        <button id="saveCharacter" type="submit" value="default" class="btn btn-primary">Speichern</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast" role="status"></div>
+  <script src="app.js"></script>
+</body>
+</html>
