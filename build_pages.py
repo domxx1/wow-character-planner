@@ -1,7 +1,7 @@
 from pathlib import Path
 import json
 
-VERSION = "0.6.9"
+VERSION = "0.7.0"
 
 base = Path("app.js").read_text(encoding="utf-8")
 marker = "/* Load additive compatibility/features when app.js is served directly (no bundling service worker). */"
@@ -13,7 +13,7 @@ patches = [
     "patch-v4.js", "patch-v4-1.js", "patch-v5.js", "patch-v6.js",
     "patch-v6-1.js", "patch-v6-2.js", "patch-v6-3.js", "patch-v6-4.js",
     "patch-v6-5.js", "patch-v6-6.js", "patch-v6-7.js", "patch-v6-8.js",
-    "patch-v6-9.js"
+    "patch-v6-9.js", "patch-v7.js"
 ]
 bundle = base + "\n\n" + "\n\n".join(Path(p).read_text(encoding="utf-8") for p in patches)
 Path("bundle.js").write_text(bundle, encoding="utf-8")
