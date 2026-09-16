@@ -1,4 +1,4 @@
-const CACHE="wow-charplan-v23";
+const CACHE="wow-charplan-v24";
 const ASSETS=[
   "./","./index.html","./app.css","./bundle.js","./version.json","./manifest.webmanifest",
   "./icons/icon-192.png","./icons/icon-512.png","./icons/apple-touch-icon.png"
