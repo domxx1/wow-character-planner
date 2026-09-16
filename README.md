@@ -2,48 +2,32 @@
 
 Mobile und Desktop-fähige PWA zur Planung von World-of-Warcraft-Charakteren.
 
-## Aktueller Stand: 0.1.1
+## Aktueller Stand: 0.6.2
 
-- Dashboard
+- Dashboard mit Gesamt-, Vorhanden- und Geplant-Zahlen
 - Charaktere anlegen, bearbeiten und löschen
 - Suche und Filter
-- automatische Rassen-/Klassen-Matrix
-- Berufsübersicht
-- Rüstungsarten-Auswertung
-- lokale Speicherung auf dem Gerät
+- Rassen-/Klassen-Matrix mit aktuellen sowie ausdrücklich angekündigten Kombinationen
+- Berufs- und Rüstungsarten-Auswertung
+- lokale Offline-Speicherung
+- private geräteübergreifende Synchronisierung über ein separates GitHub-Repository
+- lokale Portraits können über das private Daten-Repository synchronisiert werden
 - CSV-Import/-Export mit Semikolon
 - JSON-Backup
-- PWA-Manifest mit 192/512-Pixel-Icons
-- Offline-Grundfunktion über Service Worker
-- GitHub-Pages-Workflow
+- installierbare PWA und GitHub Pages
 
 ## CSV-Import
 
-Unterstützte Spalten:
+Aktuelle Vorlage:
 
-`Name;Volk;Fraktion;Klasse;Geschlecht;Beruf 1;Beruf 2;Midnight;Status;Server;Notizen`
+`Name;Volk;Variante;Fraktion;Klasse;Geschlecht;Level;Spezialisierung;Beruf 1;Beruf 2;Erweiterung Remix;Status;Server;Region;Notizen`
 
-Die bisherigen Kernspalten reichen:
+Das frühere separate Feld `Midnight` wurde in 0.6.2 entfernt. Die Erweiterung Midnight kann weiterhin regulär als Wert unter `Erweiterung Remix` verwendet werden.
 
-`Name;Volk;Fraktion;Klasse;Geschlecht;Beruf 1;Beruf 2;Midnight`
+## Cloud-Synchronisierung
 
-## GitHub Pages
-
-Der Workflow `.github/workflows/pages.yml` ist für GitHub Pages vorbereitet.
-
-Nach dem Hochladen:
-
-1. Repository → **Settings**
-2. **Pages**
-3. Unter **Build and deployment** als **Source** → **GitHub Actions**
-4. Workflow ausführen lassen bzw. einen Commit auf `main` pushen
-5. Die veröffentlichte URL auf Android in Chrome öffnen
-6. **⋮ → App installieren** / **Zum Startbildschirm hinzufügen**
-
-## Datenschutz / Speicherung
-
-0.1.1 speichert Charakterdaten ausschließlich im LocalStorage des verwendeten Browsers. Daten werden noch nicht zwischen Geräten synchronisiert.
+Die App selbst liegt im öffentlichen Repository. Persönliche Charakterdaten werden bei aktivierter Synchronisierung ausschließlich im separat konfigurierten privaten Daten-Repository gespeichert. Der Fine-grained GitHub Token wird nicht in dieses Repository geschrieben.
 
 ## WoW-Daten
 
-Patchabhängige Rassen-/Klassen-Regeln werden bewusst separat gepflegt und nicht als unbestätigte statische Regeln fest verdrahtet.
+Patchabhängige Rassen-/Klassen-Regeln werden separat gepflegt. Für Eclipse angekündigte Paladin-Optionen werden als zukünftige Kombinationen kenntlich gemacht und nicht als bereits in Patch 12.1 verfügbare Kombinationen ausgegeben.
