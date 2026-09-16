@@ -1,10 +1,14 @@
 /* v0.7.7 — Dashboard bars open the character list with matching filters. */
 (() => {
   const VERSION = "0.7.7";
-  const GROUP_STORAGE_KEY = "wowCharacterPlanner.peopleGroups.v1";
+  const RETAIL_GROUP_STORAGE_KEY = "wowCharacterPlanner.peopleGroups.v1";
+  const FOREVER_GROUP_STORAGE_KEY = "wowCharacterPlanner.forever.peopleGroups.v1";
   let dashboardFilter = null;
 
   const lower = value => String(value || "").trim().toLocaleLowerCase("de");
+  const groupStorageKey = () => typeof window.wowCharacterPlannerGameMode === "function" && window.wowCharacterPlannerGameMode() === "forever"
+    ? FOREVER_GROUP_STORAGE_KEY
+    : RETAIL_GROUP_STORAGE_KEY;
 
   function clearNativeFilters() {
     const values = {
@@ -25,7 +29,7 @@
   function peopleGroupRaces(groupName) {
     let groups = [];
     try {
-      const parsed = JSON.parse(localStorage.getItem(GROUP_STORAGE_KEY) || "[]");
+      const parsed = JSON.parse(localStorage.getItem(groupStorageKey()) || "[]");
       groups = Array.isArray(parsed) ? parsed : [];
     } catch {}
     const group = groups.find(g => !g?.deleted && lower(g?.name) === lower(groupName));
