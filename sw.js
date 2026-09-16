@@ -1,6 +1,6 @@
-const CACHE="wow-charplan-v15";
+const CACHE="wow-charplan-v16";
 const ASSETS=[
-  "./","./index.html","./app.css","./app.js","./patch-v2.js","./patch-v2-1.js","./patch-v3.js","./patch-v3-1.js","./patch-v4.js","./patch-v4-1.js","./patch-v5.js","./patch-v6.js","./patch-v6-1.js","./patch-v6-2.js","./manifest.webmanifest",
+  "./","./index.html","./app.css","./bundle.js","./manifest.webmanifest",
   "./icons/icon-192.png","./icons/icon-512.png","./icons/apple-touch-icon.png"
 ];
 
@@ -8,8 +8,10 @@ self.addEventListener("install",e=>{
   self.skipWaiting();
   e.waitUntil(caches.open(CACHE).then(async c=>{
     for(const asset of ASSETS){
-      const response=await fetch(asset,{cache:"reload"});
-      if(response&&response.status===200) await c.put(asset,response.clone());
+      try{
+        const response=await fetch(asset,{cache:"reload"});
+        if(response&&response.status===200) await c.put(asset,response.clone());
+      }catch{}
     }
   }));
 });
@@ -25,35 +27,7 @@ self.addEventListener("activate",e=>{
 self.addEventListener("fetch",e=>{
   if(e.request.method!=="GET") return;
   const url=new URL(e.request.url);
-
-  if(url.pathname.endsWith("/app.js")){
-    e.respondWith(caches.open(CACHE).then(async c=>{
-      const urls=["./app.js","./patch-v2.js","./patch-v2-1.js","./patch-v3.js","./patch-v3-1.js","./patch-v4.js","./patch-v4-1.js","./patch-v5.js","./patch-v6.js","./patch-v6-1.js","./patch-v6-2.js"]
-        .map(p=>new URL(p,self.location.href).href);
-      const responses=[];
-      for(const u of urls){
-        let r=null;
-        try{
-          const fresh=await fetch(u,{cache:"no-store"});
-          if(fresh&&fresh.status===200){
-            await c.put(u,fresh.clone());
-            r=fresh;
-          }
-        }catch{}
-        if(!r) r=await c.match(u);
-        responses.push(r);
-      }
-      if(responses.every(Boolean)){
-        const parts=[];
-        for(const r of responses) parts.push(await r.text());
-        return new Response(parts.join("\n\n"),{
-          headers:{"Content-Type":"application/javascript; charset=utf-8","Cache-Control":"no-store"}
-        });
-      }
-      return fetch(e.request,{cache:"no-store"});
-    }));
-    return;
-  }
+  if(url.origin!==self.location.origin) return;
 
   e.respondWith((async()=>{
     try{
@@ -64,7 +38,10 @@ self.addEventListener("fetch",e=>{
       }
       return fresh;
     }catch{
-      return (await caches.match(e.request)) || Response.error();
+      const cached=await caches.match(e.request);
+      if(cached) return cached;
+      if(e.request.mode==="navigate") return (await caches.match("./index.html")) || Response.error();
+      return Response.error();
     }
   })());
 });
