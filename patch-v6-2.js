@@ -24,11 +24,31 @@
     document.querySelector("#characterForm")?.appendChild(hidden);
   }
 
-  characters.forEach(c => { if(c && Object.prototype.hasOwnProperty.call(c,"midnight")) delete c.midnight; });
+  function stripMidnight(){
+    let changed = false;
+    characters.forEach(c => {
+      if(c && Object.prototype.hasOwnProperty.call(c,"midnight")){
+        delete c.midnight;
+        changed = true;
+      }
+    });
+    return changed;
+  }
+
+  stripMidnight();
   const previousSave = saveCharacters;
   saveCharacters = function(){
-    characters.forEach(c => { if(c && Object.prototype.hasOwnProperty.call(c,"midnight")) delete c.midnight; });
+    stripMidnight();
     previousSave();
+  };
+
+  const previousRenderAll = renderAll;
+  renderAll = function(){
+    const changed = stripMidnight();
+    previousRenderAll();
+    if(changed){
+      try { localStorage.setItem("wowCharacterPlanner.characters.v1",JSON.stringify(characters)); } catch {}
+    }
   };
 
   function selectedRace(){
