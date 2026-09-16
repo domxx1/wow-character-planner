@@ -89,7 +89,7 @@ jobs:
         const remote = String(info && info.version || "").trim();
         if (!remote || remote === CURRENT) return;
         const status = document.getElementById("appBootStatus");
-        if (status) status.textContent = `Update ${{remote}} wird geladen …`;
+        if (status) status.textContent = "Update " + remote + " wird geladen …";
         document.body && document.body.classList.add("app-booting");
         try {{ const reg = await navigator.serviceWorker?.getRegistration?.(); if (reg) await reg.update(); }} catch {{}}
         const next = new URL(location.href);
