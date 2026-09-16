@@ -1,6 +1,6 @@
-/* v0.6.4 — Clean boot and automatic version checks for the installed PWA. */
+/* v0.6.4+ — Clean boot and automatic version checks for the installed PWA. */
 (() => {
-  const VERSION = "0.6.4";
+  const VERSION = String(window.__APP_VERSION__ || "0.6.4");
   const CHECK_INTERVAL = 15000;
   let lastCheck = 0;
   let checking = false;
