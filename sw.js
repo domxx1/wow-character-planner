@@ -1,6 +1,6 @@
-const CACHE="wow-charplan-v16";
+const CACHE="wow-charplan-v17";
 const ASSETS=[
-  "./","./index.html","./app.css","./bundle.js","./manifest.webmanifest",
+  "./","./index.html","./app.css","./bundle.js","./version.json","./manifest.webmanifest",
   "./icons/icon-192.png","./icons/icon-512.png","./icons/apple-touch-icon.png"
 ];
 
@@ -38,7 +38,7 @@ self.addEventListener("fetch",e=>{
       }
       return fresh;
     }catch{
-      const cached=await caches.match(e.request);
+      const cached=await caches.match(e.request,{ignoreSearch:true});
       if(cached) return cached;
       if(e.request.mode==="navigate") return (await caches.match("./index.html")) || Response.error();
       return Response.error();
