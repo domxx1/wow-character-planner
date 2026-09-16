@@ -1,7 +1,7 @@
 from pathlib import Path
 import json
 
-VERSION = "0.7.11"
+VERSION = "0.7.12"
 
 base = Path("app.js").read_text(encoding="utf-8")
 marker = "/* Load additive compatibility/features when app.js is served directly (no bundling service worker). */"
@@ -16,7 +16,7 @@ patches = [
     "patch-v6-9.js", "patch-v7.js", "patch-v7-1.js", "patch-v7-2.js",
     "patch-v7-3.js", "patch-v7-4.js", "patch-v7-5.js", "patch-v7-6.js",
     "patch-v7-7.js", "patch-v7-8.js", "patch-v7-9.js", "patch-v7-10.js",
-    "patch-v7-11.js"
+    "patch-v7-11.js", "patch-v7-12.js"
 ]
 bundle = base + "\n\n" + "\n\n".join(Path(p).read_text(encoding="utf-8") for p in patches)
 Path("bundle.js").write_text(bundle, encoding="utf-8")
@@ -34,8 +34,8 @@ boot_head = f'''
     #appBoot[hidden] {{ display:none !important; }}
     .app-boot-card {{ display:grid; justify-items:center; gap:14px; padding:24px; text-align:center; }}
     .app-boot-mark {{ width:54px; height:54px; border-radius:14px; display:grid; place-items:center; background:#111827; border:1px solid rgba(255,255,255,.12); font-weight:800; font-size:24px; }}
-    .app-boot-spinner {{ width:26px; height:26px; border:3px solid rgba(255,255,255,.14); border-top-color:#d4af37; border-radius:50%; animation:appBootSpin .8s linear infinite; }}
-    .app-boot-status {{ color:#9ca3af; font-size:.82rem; }}
+    .app-boot-spinner {{ width:26px;height:26px;border:3px solid rgba(255,255,255,.14);border-top-color:#d4af37;border-radius:50%;animation:appBootSpin .8s linear infinite; }}
+    .app-boot-status {{ color:#9ca3af;font-size:.82rem; }}
     @keyframes appBootSpin {{ to {{ transform:rotate(360deg); }} }}
   </style>
   <script>
